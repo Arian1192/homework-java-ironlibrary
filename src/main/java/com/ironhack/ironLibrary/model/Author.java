@@ -15,5 +15,5 @@ public class Author {
     private Integer authorId;
     private String name;
     private String email;
-    private Book authorBook;
+    //private Book authorBook;
 }
