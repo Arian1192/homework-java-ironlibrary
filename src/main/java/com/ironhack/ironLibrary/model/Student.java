@@ -12,12 +12,15 @@ public class Student {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String usn;
+    private Integer usn;
 
     private String name;
 
     public Student() {
 
     }
-
+    public Student(Integer usn, String name) {
+        this.usn = usn;
+        this.name = name;
+    }
 }
