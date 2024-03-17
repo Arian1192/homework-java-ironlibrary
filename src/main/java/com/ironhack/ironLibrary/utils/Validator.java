@@ -17,4 +17,15 @@ public class Validator {
                 .matches();
     }
 
+    public static boolean validateInteger(String input) {
+        try {
+            if (input == null || input.trim().isEmpty()) {
+                return false;
+            }
+            Integer.parseInt(input);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }
