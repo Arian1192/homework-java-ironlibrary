@@ -1,13 +1,13 @@
 package com.ironhack.ironLibrary.utils;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+
 class ValidatorTest {
 
     @ParameterizedTest
@@ -24,5 +24,17 @@ class ValidatorTest {
         assertFalse(Validator.checkISBNFormat(isbn));
     }
 
+    @ParameterizedTest
+    @DisplayName("Should validate correct Email")
+    @ValueSource(strings = {"test@edu.es", "ironhack_private@ironhack.es", "no-reply@ironhack.com"} )
+    void isCheckEmailValid_when_correct_Email(String email) {
+        assertTrue(Validator.checkEmailFormat(email));
+    }
 
+    @ParameterizedTest
+    @DisplayName("Should validate correct Email")
+    @ValueSource(strings = {"test@edu.e", "ironhack_!private@ironhack.es", "@ironhack.com"} )
+    void isCheckEmailInvalid_when_incorrect_Email(String email) {
+        assertFalse(Validator.checkEmailFormat(email));
+    }
 }

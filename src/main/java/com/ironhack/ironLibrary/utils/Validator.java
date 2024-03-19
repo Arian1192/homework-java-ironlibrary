@@ -9,6 +9,10 @@ public class Validator {
         return patternMatches(maybeISBN, "^(?=(?:\\D*\\d){10}(?:(?:\\D*\\d){3})?$)[\\d-]+$");
     }
 
+    public static boolean checkEmailFormat(String email){
+        return patternMatches(email, "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    }
+
 
 
     private static boolean patternMatches(String inputString, String regexPattern) {
