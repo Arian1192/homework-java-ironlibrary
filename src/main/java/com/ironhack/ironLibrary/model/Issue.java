@@ -14,7 +14,11 @@ public class Issue {
     private Integer issueId;
     private String issueDate;
     private String returnDate;
+    @OneToOne
+    @JoinColumn(name = "usn")
     private Student issueStudent;
+    @OneToOne
+    @JoinColumn(name = "isbn")
     private Book issueBook;
 
     public Issue(String issueDate, String returnDate, Student issueStudent, Book issueBook) {
