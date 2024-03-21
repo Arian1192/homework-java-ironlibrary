@@ -15,5 +15,7 @@ public class Author {
     private Integer authorId;
     private String name;
     private String email;
-    //private Book authorBook;
+    @OneToOne
+    @JoinColumn(name = "isbn")
+    private Book authorBook;
 }
