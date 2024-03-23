@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "books")
 public class Book {
     @Id
     @Setter(AccessLevel.NONE)
@@ -13,5 +16,7 @@ public class Book {
     private String title;
     private String category;
     private Integer quantity;
+
+
 
 }

@@ -32,4 +32,14 @@ public class Validator {
             return false;
         }
     }
+
+    public static boolean notBlankValidatorBooks(String input) {
+        return input != null && !input.trim().isEmpty();
+    }
+
+    public static boolean validateStringGeneralFormat(String input) {
+        return input != null && !input.isEmpty() && patternMatches(input, "^[a-zA-ZÀ-ÿ\\s]*$");
+    }
 }
+
+
