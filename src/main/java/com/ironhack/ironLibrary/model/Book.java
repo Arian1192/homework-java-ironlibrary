@@ -12,7 +12,6 @@ import jakarta.persistence.*;
 public class Book {
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String isbn;
     private String title;
     private String category;
