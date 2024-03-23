@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 public class Book {
     @Id
     @Setter(AccessLevel.NONE)
+
     private String isbn;
     private String title;
     private String category;
