@@ -48,6 +48,5 @@ jobs:
 
     - name: Run unit tests
       run : mvn test --file pom.xml
-    - name: Run Spring Boot tests
-      run: mvn -B test -Dspring.datasource.url=jdbc:mysql://localhost:3306/${{ secrets.MYSQL_DATABASE }} -Dspring.datasource.username=${{ secrets.MYSQL_USERNAME }} -Dspring.datasource.password=${{ secrets.MYSQL_PASSWORD }}
+
 
