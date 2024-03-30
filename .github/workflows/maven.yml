@@ -30,7 +30,6 @@ jobs:
           MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
           MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME}}
           MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -48,9 +47,9 @@ jobs:
 
       - name: Configure MySQL User
         run: |
-          echo "CREATE USER 'runner'@'127.0.0.1';" > create_user.sql
+          echo "CREATE USER 'runner'@'172.18.0.1';" > create_user.sql
           echo "FLUSH PRIVILEGES;" >> create_user.sql
-          mysql -h 127.0.0.1 -P 3306 -u root -p root < create_user.sql
+          mysql -h '172.18.0.1 -P 3306 -u root  < create_user.sql
 
 
       - name: Build with Maven
