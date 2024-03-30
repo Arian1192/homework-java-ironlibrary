@@ -46,7 +46,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B clean package --file pom.xml
 
-    #- name: Run unit tests
-     # run : mvn test --file pom.xml
-    - name: Run Spring Boot tests
-      run: mvn -B test -Dspring.datasource.url=jdbc:mysql://localhost:3306/${{ secrets.MYSQL_DATABASE }} -Dspring.datasource.username=${{ secrets.MYSQL_USER }} -Dspring.datasource.password=${{ secrets.MYSQL_PASSWORD }}
+    - name: Run unit tests
+      run : mvn test --file pom.xml
+    - name: Run repository tests
+      run: mvn -B test -Dtest=com.ironhack.ironLibrary.repository.* --file pom.xml
