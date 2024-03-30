@@ -26,9 +26,9 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          #MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
-          MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME}}
+          MYSQL_USERNAME: runner
           MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
         ports:
           - 3306:3306
