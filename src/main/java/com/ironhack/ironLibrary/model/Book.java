@@ -16,7 +16,4 @@ public class Book {
     private String title;
     private String category;
     private Integer quantity;
-
-
-
 }
