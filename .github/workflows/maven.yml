@@ -47,7 +47,7 @@ jobs:
 
       - name: Configure MySQL User
         run: |
-            echo "CREATE USER 'runner+'@'172.18.0.1';" > create_user.sql
+            echo "CREATE USER 'runner'@'172.18.0.1';" > create_user.sql
             echo "FLUSH PRIVILEGES;" >> create_user.sql
             mysql -h 127.0.0.1 -P 3306 -u root < create_user.sql
 
