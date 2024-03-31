@@ -22,18 +22,22 @@ jobs:
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
 
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-          MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-        ports:
-          - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    #services:
+      #mysql:
+        #image: mysql:latest
+        #env:
+          #MYSQL_ROOT_PASSWORD: root
+          #MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          #MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+          #MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        #ports:
+          #- 3306:3306
+        #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
+      - name: Set up MySQL
+        run : |
+          sudo /etc/init.d/mysql start
+          mysql -e 'CREATE DATABASE ${{env.MYSQL_DATABASE}};' -u${{env.MYSQL_USERNAME}} -p${{env.MYSQL_PASSWORD}}
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -44,8 +48,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Debug MySQL connection
-        run: mysql -h localhost -u $MYSQL_USERNAME --password=$MYSQL_PASSWORD -e 'SHOW DATABASES;'
+      #- name: Debug MySQL connection
+        #run: mysql -h localhost -u $MYSQL_USERNAME --password=$MYSQL_PASSWORD -e 'SHOW DATABASES;'
       - name: Build with Maven
         run: mvn -B clean package --file pom.xml
 
