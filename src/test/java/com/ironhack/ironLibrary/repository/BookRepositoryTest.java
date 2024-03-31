@@ -7,13 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class BookRepositoryTest {
-
+    int quantityOfNovelBooks = 0;
     @Autowired
     private BookRepository bookRepository;
 
@@ -63,4 +64,27 @@ class BookRepositoryTest {
         }
     }
 
+    @Test
+    void shouldGetAllBooksUsingFindAllByCategory() {
+        Book newBook = new Book("978-84-415-4302-0", "The fenix project", "novel", 10);
+        bookRepository.save(newBook);
+        Optional<List<Book>> maybeListOfBooks = bookRepository.findAllByCategory("novel");
+        if(maybeListOfBooks.isPresent()){
+            List<Book> listOfBooks = maybeListOfBooks.get();
+            assertEquals(2, listOfBooks.size());
+        }
+    }
+
+    @Test
+    void shouldGetTheRightQuantityOfBooksUsingFindAllByCategory(){
+        Book newBooks = new Book("978-84-415-4302-0", "The fenix project", "novel", 10);
+        bookRepository.save(newBooks);
+        Optional<List<Book>> maybeListOfBooks = bookRepository.findAllByCategory("novel");
+        if(maybeListOfBooks.isPresent()){
+            maybeListOfBooks.get().forEach(book -> {
+                quantityOfNovelBooks = quantityOfNovelBooks + book.getQuantity();
+            });
+            assertEquals(11, quantityOfNovelBooks);
+        }
+    }
 }
