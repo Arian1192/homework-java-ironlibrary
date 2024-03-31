@@ -35,9 +35,9 @@ jobs:
         #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Set up MySQL
-        run : |
+        run: |
           sudo /etc/init.d/mysql start
-          mysql -e 'CREATE DATABASE ${{env.MYSQL_DATABASE}};' -u${{env.MYSQL_USERNAME}} -p${{env.MYSQL_PASSWORD}}
+          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' -u${{ env.MYSQL_USERNAME }} -p${{ env.MYSQL_PASSWORD }}
       - name: Checkout repository
         uses: actions/checkout@v3
 
