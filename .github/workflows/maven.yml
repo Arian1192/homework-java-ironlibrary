@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
 
     #services:
       #mysql:
