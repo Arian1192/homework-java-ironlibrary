@@ -5,11 +5,9 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "books")
 public class Book {
     @Id
@@ -18,7 +16,5 @@ public class Book {
     private String title;
     private String category;
     private Integer quantity;
-
-
 
 }
