@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Book, String> {
     Optional<List<Book>> findAllByCategory(String Category);
+    Optional<Book> findOneByTitle(String Title);
 }
