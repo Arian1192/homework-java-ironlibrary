@@ -5,6 +5,8 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Book {
     @Id
