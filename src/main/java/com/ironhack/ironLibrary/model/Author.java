@@ -5,7 +5,6 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "authors")
 public class Author {
@@ -18,4 +17,10 @@ public class Author {
     @OneToOne
     @JoinColumn(name = "isbn")
     private Book authorBook;
+
+    public Author(String name, String email, Book authorBook){
+        this.name = name;
+        this.email = email;
+        this.authorBook = authorBook;
+    }
 }
