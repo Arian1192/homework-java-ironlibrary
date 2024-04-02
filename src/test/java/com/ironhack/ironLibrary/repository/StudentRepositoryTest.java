@@ -1,6 +1,7 @@
 package com.ironhack.ironLibrary.repository;
 
 import com.ironhack.ironLibrary.model.Student;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,20 +20,27 @@ public class StudentRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Student student = new Student(1, "Student1");
-        student = studentRepository.save(student);
+        Student student1 = new Student(1, "Student1");
+        Student student2 = new Student(2, "Student2");
+        studentRepository.save(student1);
+        studentRepository.save(student2);
     }
 
     @AfterEach
     void tearDown() {
         studentRepository.deleteAll();
-        studentRepository.flush();
+      //  studentRepository.flush();
+    }
+
+    @Test
+    void checkSaveItem() {
+        assertEquals(2, studentRepository.count());
     }
 
    @Test
     void findByUsnAndNameTest() {
-        Optional<Student> student = studentRepository.findByUsnAndName(1, "Student1");
+        Optional<Student> student = studentRepository.findByUsnAndName(2, "Student2");
         assertTrue(student.isPresent());
-        assertEquals("Student1", student.get().getName());
+        assertEquals("Student2", student.get().getName());
     }
 }
