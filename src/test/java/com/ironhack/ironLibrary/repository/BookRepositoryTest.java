@@ -87,4 +87,16 @@ class BookRepositoryTest {
             assertEquals(11, quantityOfNovelBooks);
         }
     }
+
+    @Test
+    void shouldGetTheRightBookUsingFindOneByTitle() {
+        Optional<Book> maybeBook = bookRepository.findOneByTitle("The unicorn project");
+        maybeBook.ifPresent(book -> assertEquals("The unicorn project", book.getTitle()));
+    }
+
+    @Test
+    void shouldGetFalseIfWeFindTheWrongTitleUsingFindOneByTitle() {
+        Optional<Book> maybeBook = bookRepository.findOneByTitle("The unicorn project");
+        maybeBook.ifPresent(book -> assertNotEquals("The fenix project", book.getTitle()));
+    }
 }
