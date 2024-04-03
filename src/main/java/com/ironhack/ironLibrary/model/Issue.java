@@ -14,10 +14,10 @@ public class Issue {
     private Integer issueId;
     private String issueDate;
     private String returnDate;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "usn")
     private Student issueStudent;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "isbn")
     private Book issueBook;
 
