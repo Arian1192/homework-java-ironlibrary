@@ -11,16 +11,21 @@ public class Student {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer usn;
+//    @GeneratedValue(strategy = GenerationType.UUID)
+    private String usn;
 
     private String name;
 
     public Student() {
 
     }
-    public Student(Integer usn, String name) {
+    public Student(String usn, String name) {
         this.usn = usn;
         this.name = name;
     }
+
+    public Student(String name){
+        setName(name);
+    }
+
 }
