@@ -15,8 +15,8 @@ public interface AuthorRepository extends JpaRepository<Author,Integer> {
     @Query("SELECT b From Author a JOIN a.authorBook b WHERE a.name = ?1")
     Optional<Book> findBookByAuthor(String authorName);
 
-    @Query("SELECT b.*, a.name, a.email FROM Author a INNER JOIN book b ON a.authorBook = b")
-    public List<Book>
+    @Query("SELECT b.*, a.name, a.email FROM Author a JOIN a.authorBook b")
+    public List<Book> findAllWithAuthor();
 }
 
 // TO ASK

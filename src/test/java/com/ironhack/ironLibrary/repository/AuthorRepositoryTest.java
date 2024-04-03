@@ -53,4 +53,10 @@ class AuthorRepositoryTest {
         Optional<Book> maybeBook = authorRepository.findBookByAuthor("J.K Rowling");
         assertFalse(maybeBook.isPresent());
     }
+
+    @Test
+    void getAllBookWithAuthor(){
+
+    }
+
 }
