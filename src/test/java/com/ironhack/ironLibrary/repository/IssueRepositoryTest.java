@@ -36,44 +36,60 @@ class IssueRepositoryTest {
 
     @BeforeEach
     void setUp() {
-
+        Issue issue = new Issue();
         dummyStudent = new Student("09003688800", "Pedro");
-        dummyStudent2 = new Student("09003688801","Maria");
+        dummyStudent2 = new Student("09003688801", "Maria");
         studentRepository.save(dummyStudent);
 
         dummyBook = new Book("978-84-415-4301-0", "The unicorn project", "novel", 1);
         dummyBook2 = new Book("978-84-415-4302-0", "The fenix project", "novel", 1);
         bookRepository.saveAll(List.of(dummyBook, dummyBook2));
 
-        dummyIssue = new Issue("03/04/2024", "10/04/2024",dummyStudent, dummyBook);
+        dummyIssue = new Issue("03/04/2024", "10/04/2024", dummyStudent, dummyBook);
 //        dummyIssue2 = new Issue("10/04/2024", "20/04/2024",dummyStudent, dummyBook2);
 //        issueRepository.saveAll(List.of(dummyIssue, dummyIssue2));
-            issueRepository.save(dummyIssue);
+        issueRepository.save(issue);
     }
 
-    @AfterEach
-    void tearDown() {
-        issueRepository.deleteAll();
-        bookRepository.deleteAll();
-        studentRepository.deleteAll();
+            @AfterEach
+            void tearDown() {
+                issueRepository.deleteAll();
+                bookRepository.deleteAll();
+                studentRepository.deleteAll();
 
-    }
+            }
 
-    @Test
-    void shouldFindOneBookIdWeUseFindAllBooksByUsn() {
-        Optional<List<Book>> maybeListOfBooksIssued = issueRepository.findAllBooksByUsn(dummyStudent.getUsn());
-        if(maybeListOfBooksIssued.isPresent()){
-            List<Book> listOfBooksIssued = maybeListOfBooksIssued.get();
-            assertEquals(1, listOfBooksIssued.size());
+            @Test
+            void shouldFindOneBookIdWeUseFindAllBooksByUsn() {
+                issueRepository.save(dummyIssue);
+                Optional<List<Book>> maybeListOfBooksIssued = issueRepository.findAllBooksByUsn(dummyStudent.getUsn());
+                if (maybeListOfBooksIssued.isPresent()) {
+                    List<Book> listOfBooksIssued = maybeListOfBooksIssued.get();
+                    assertEquals(1, listOfBooksIssued.size());
+                }
+            }
+
+            @Test
+            void shouldNotFindAnyBookIdWeUseFindAllBooksByUsn() {
+                Optional<List<Book>> maybeListOfBooksIssued = issueRepository.findAllBooksByUsn(dummyStudent2.getUsn());
+                if (maybeListOfBooksIssued.isPresent()) {
+                    List<Book> listOfBooksIssued = maybeListOfBooksIssued.get();
+                    assertEquals(0, listOfBooksIssued.size());
+                }
+            }
+
+            @Test
+            void saveItemTest() {
+                assertEquals(1, issueRepository.count());
+            }
+
+            @Test
+            void deleteItemTest() {
+                Optional<Issue> firstIssue = issueRepository.findAll().stream().findFirst();
+                assertTrue(firstIssue.isPresent());
+                issueRepository.delete(firstIssue.get());
+                assertEquals(0, issueRepository.count());
+            }
+
         }
-    }
 
-    @Test
-    void shouldNotFindAnyBookIdWeUseFindAllBooksByUsn() {
-        Optional<List<Book>> maybeListOfBooksIssued = issueRepository.findAllBooksByUsn(dummyStudent2.getUsn());
-        if(maybeListOfBooksIssued.isPresent()){
-            List<Book> listOfBooksIssued = maybeListOfBooksIssued.get();
-            assertEquals(0, listOfBooksIssued.size());
-        }
-    }
-}

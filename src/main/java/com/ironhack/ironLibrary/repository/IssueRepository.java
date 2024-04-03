@@ -1,5 +1,4 @@
 package com.ironhack.ironLibrary.repository;
-
 import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.model.Issue;
 import org.springframework.data.jpa.repository.JpaRepository;
