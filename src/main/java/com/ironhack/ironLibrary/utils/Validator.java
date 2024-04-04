@@ -1,6 +1,9 @@
 package com.ironhack.ironLibrary.utils;
 
 
+import org.springframework.stereotype.Component;
+
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Validator {
@@ -40,6 +43,54 @@ public class Validator {
     public static boolean validateStringGeneralFormat(String input) {
         return input != null && !input.isEmpty() && patternMatches(input, "^[a-zA-ZÀ-ÿ\\s]*$");
     }
+
+    /**
+     * TODO Testing
+     * @param printText
+     * @param validTheNextInput
+     * @param methodName
+     * @param suggestedInputFormat
+     * @return
+     */
+    public static String userInput(String printText, boolean validTheNextInput, String methodName, String suggestedInputFormat){
+        String userInputText;
+        boolean result = false;
+        do{
+            System.out.print(printText);
+            Scanner scanner = new Scanner(System.in);
+            userInputText = scanner.nextLine();
+            if(validTheNextInput){
+                try{
+                    switch(methodName){
+                        case "checkISBNFormat":
+                            result = Validator.checkISBNFormat(userInputText);
+                            break;
+                        case "validateStringGeneralFormat":
+                            result = Validator.validateStringGeneralFormat(userInputText);
+                            break;
+                        case "checkEmailFormat":
+                            result = Validator.checkEmailFormat(userInputText);
+                            break;
+                        case "validateInteger":
+                            result = Validator.validateInteger(userInputText);
+                            break;
+                        case "notBlankValidatorBooks":
+                            result = Validator.notBlankValidatorBooks(userInputText);
+                            break;
+                    }
+                    if(!result){
+                        System.out.println("Sorry, but the input format it's incorrect. Please try again: ");
+                        System.out.println(suggestedInputFormat);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else{
+                result = true;
+            }
+        }while(!result);
+        return userInputText;
+    };
 }
 
 

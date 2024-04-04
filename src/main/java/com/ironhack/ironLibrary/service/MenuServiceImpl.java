@@ -5,8 +5,9 @@ import com.ironhack.ironLibrary.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
-import java.sql.SQLOutput;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import com.ironhack.ironLibrary.utils.Validator;
@@ -14,33 +15,59 @@ import com.ironhack.ironLibrary.utils.Validator;
 @Service
 public class MenuServiceImpl implements IMenuService{
 
-    private final IAuthorService authorService;
-    private final IBookService bookService;
-
     @Autowired
-    public MenuServiceImpl(IAuthorService authorService, IBookService bookService) {
-        this.authorService = authorService;
-        this.bookService = bookService;
+    private IAuthorService authorService;
+    @Autowired
+    private IBookService bookService;
+
+    /**
+     * TODO Testing
+     * @return
+     */
+    public List<String> getNewBookInformation(){
+
+        List <String> bookAndAuthorDetails = new ArrayList<>();
+
+        String isbn = Validator.userInput("Enter isbn: ",true, "checkISBNFormat",
+                "The ISBN must follow the next format: 978-92-95055-02-5");
+        bookAndAuthorDetails.add(isbn);
+        String title = Validator.userInput("Enter title: ", false, "NULL", "NULL");
+        bookAndAuthorDetails.add(title);
+        String category = Validator.userInput("Enter category: ", true, "validateStringGeneralFormat",
+                "The category only accepts letters");
+        bookAndAuthorDetails.add(category);
+        String authorName = Validator.userInput("Enter author name: ", true, "validateStringGeneralFormat",
+                "The author name only accepts letters");
+        bookAndAuthorDetails.add(authorName);
+        String email = Validator.userInput("Enter author email: ", true, "checkEmailFormat",
+                "The email must contains an @ and a . ");
+        bookAndAuthorDetails.add(email);
+        String quantity = Validator.userInput("Enter number of books: ", true, "validateInteger",
+                "The quantity only accepts numbers");
+        bookAndAuthorDetails.add(quantity);
+
+        return bookAndAuthorDetails;
     }
 
-    public void  addBook() {
-        String isbn = userInput("Enter isbn: ",true, "checkISBNFormat",
-                "The ISBN must follow the next format: 978-92-95055-02-5");
-        String title = userInput("Enter title: ", false, "NULL", "NULL");
-        String category = userInput("Enter category: ", true, "validateStringGeneralFormat",
-                "The category only accepts letters");
-        String authorName = userInput("Enter author name: ", true, "validateStringGeneralFormat",
-                "The author name only accepts letters");
-        String email = userInput("Enter author email: ", true, "checkEmailFormat",
-                "The email must contains an @ and a . ");
-        int quantity = Integer.parseInt(userInput("Enter number of books: ", true, "validateInteger",
-                "The quantity only accepts numbers"));
+    /**
+     * TODO Testing
+     * @param bookAndAuthorInformation
+     */
 
-        Book neeBook = new Book(isbn, title, category, quantity);
+    public void  addBook(List<String> bookAndAuthorInformation) {
+
+        String isbn = bookAndAuthorInformation.get(0);
+        String title = bookAndAuthorInformation.get(1);
+        String category = bookAndAuthorInformation.get(2);
+        String authorName = bookAndAuthorInformation.get(3);
+        String email = bookAndAuthorInformation.get(4);
+        int quantity = Integer.parseInt(bookAndAuthorInformation.get(5));
+
+        Book newBook = new Book(isbn, title, category, quantity);
         Author author = new Author();
         author.setName(authorName);
         author.setEmail(email);
-        author.setAuthorBook(neeBook);
+        author.setAuthorBook(newBook);
 
         Optional<Book> optionalBook = bookService.findByIsbn(isbn);
 
@@ -52,48 +79,7 @@ public class MenuServiceImpl implements IMenuService{
             bookService.save(book);
         }else{
             authorService.save(author);
-            bookService.save(neeBook);
+            bookService.save(newBook);
         }
-
     }
-
-    String userInput(String printText, boolean validTheNextInput, String methodName, String suggestedInputFormat){
-        String userInputText;
-        boolean result = false;
-        do{
-            System.out.print(printText);
-            Scanner scanner = new Scanner(System.in);
-            userInputText = scanner.nextLine();
-            if(validTheNextInput){
-                try{
-                    switch(methodName){
-                        case "checkISBNFormat":
-                            result = Validator.checkISBNFormat(userInputText);
-                            break;
-                        case "validateStringGeneralFormat":
-                            result = Validator.validateStringGeneralFormat(userInputText);
-                            break;
-                        case "checkEmailFormat":
-                            result = Validator.checkEmailFormat(userInputText);
-                            break;
-                        case "validateInteger":
-                            result = Validator.validateInteger(userInputText);
-                            break;
-                        case "notBlankValidatorBooks":
-                            result = Validator.notBlankValidatorBooks(userInputText);
-                            break;
-                    }
-                    if(!result){
-                        System.out.println("Sorry, but the input format it's incorrect. Please try again: ");
-                        System.out.println(suggestedInputFormat);
-                    }
-                }catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }else{
-                result = true;
-            }
-        }while(!result);
-        return userInputText;
-    };
 }
