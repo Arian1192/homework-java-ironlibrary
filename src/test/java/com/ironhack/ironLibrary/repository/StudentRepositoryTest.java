@@ -20,8 +20,8 @@ public class StudentRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        Student student1 = new Student(1, "Student1");
-        Student student2 = new Student(2, "Student2");
+        Student student1 = new Student("09003688800", "Student1");
+        Student student2 = new Student("09003688801", "Student2");
         studentRepository.save(student1);
         studentRepository.save(student2);
     }
@@ -29,7 +29,6 @@ public class StudentRepositoryTest {
     @AfterEach
     void tearDown() {
         studentRepository.deleteAll();
-      //  studentRepository.flush();
     }
 
     @Test
@@ -39,7 +38,7 @@ public class StudentRepositoryTest {
 
    @Test
     void findByUsnAndNameTest() {
-        Optional<Student> student = studentRepository.findByUsnAndName(2, "Student2");
+        Optional<Student> student = studentRepository.findByUsnAndName("09003688801", "Student2");
         assertTrue(student.isPresent());
         assertEquals("Student2", student.get().getName());
     }
