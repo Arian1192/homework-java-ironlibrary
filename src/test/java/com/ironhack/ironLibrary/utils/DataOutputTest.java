@@ -43,8 +43,8 @@ public class DataOutputTest {
         author1 = new Author("Author first", "author@email.com", book1);
         author2 = new Author("Author second", "author2@email.com", book2);
 
-        student1 = new Student(1, "First student");
-        student2 = new Student(2, "Second student");
+        student1 = new Student("01", "First student");
+        student2 = new Student("02", "Second student");
 
         issue1 = new Issue(student1, book1);
         issue2 = new Issue(student2, book2);

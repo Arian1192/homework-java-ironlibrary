@@ -22,7 +22,6 @@ public class Issue {
     @Setter(AccessLevel.NONE)
     private LocalDateTime returnDate;
 
-    //"2024-04-04 12:30:45".
     @OneToOne
     @JoinColumn(name = "usn")
     private Student issueStudent;
