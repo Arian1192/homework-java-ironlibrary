@@ -15,5 +15,3 @@ public interface AuthorRepository extends JpaRepository<Author,Integer> {
     Optional<Book> findBookByAuthor(String authorName);
 }
 
-// TO ASK
-// DA IGUAL SI PASaMOS LOS DATOS EN LOWERCASE O UPPER ?

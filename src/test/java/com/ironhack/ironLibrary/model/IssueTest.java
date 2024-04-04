@@ -9,7 +9,7 @@ public class IssueTest {
 
     @Test
     public void createIssue(){
-        Student student = new Student(1, "Carlos");
+        Student student = new Student("09003688800", "Carlos");
         Book book = new Book();
         Issue IssueOne = new Issue();
         Issue IssueTwo = new Issue("17/03/2024", "24/03/2024", student, book);
