@@ -2,6 +2,7 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -49,25 +50,33 @@ public class MenuServiceImpl  implements IMenuService{
         return bookAndAuthorDetails;
     }
 
-    /**
-     * TODO Testing
-     * @param bookAndAuthorInformation
-     */
 
     public void  addBook(List<String> bookAndAuthorInformation) {
+
+        if (bookAndAuthorInformation.size() != 6) {
+            throw new InvalidBookInformationException(
+                    "The book and author information must be a six-element string list.");
+        }
 
         String isbn = bookAndAuthorInformation.get(0);
         String title = bookAndAuthorInformation.get(1);
         String category = bookAndAuthorInformation.get(2);
         String authorName = bookAndAuthorInformation.get(3);
         String email = bookAndAuthorInformation.get(4);
-        int quantity = Integer.parseInt(bookAndAuthorInformation.get(5));
+        String quantityStr = bookAndAuthorInformation.get(5);
+
+        if (!Validator.checkISBNFormat(isbn) ||
+                !Validator.validateStringGeneralFormat(category) ||
+                !Validator.validateStringGeneralFormat(authorName) ||
+                !Validator.checkEmailFormat(email) ||
+                !Validator.validateInteger(quantityStr)) {
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        }
+
+        int quantity = Integer.parseInt(quantityStr);
 
         Book newBook = new Book(isbn, title, category, quantity);
-        Author author = new Author();
-        author.setName(authorName);
-        author.setEmail(email);
-        author.setAuthorBook(newBook);
+        Author author = new Author(authorName, email, newBook);
 
         Optional<Book> optionalBook = bookService.findByIsbn(isbn);
 
@@ -83,3 +92,5 @@ public class MenuServiceImpl  implements IMenuService{
         }
     }
 }
+
+

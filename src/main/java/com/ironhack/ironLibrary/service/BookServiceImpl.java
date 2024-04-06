@@ -4,6 +4,7 @@ import com.ironhack.ironLibrary.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,5 +21,15 @@ public class BookServiceImpl implements IBookService{
     @Override
     public Optional<Book> findByIsbn(String isbn) {
         return bookRepository.findByIsbn(isbn);
+    }
+
+    @Override
+    public Optional<List<Book>> findAllByCategory(String category) {
+        return bookRepository.findAllByCategory(category);
+    }
+
+    @Override
+    public Optional<Book> findOneByTitle(String title) {
+        return bookRepository.findOneByTitle(title);
     }
 }
