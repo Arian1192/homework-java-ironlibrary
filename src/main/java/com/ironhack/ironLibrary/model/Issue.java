@@ -3,6 +3,9 @@ package com.ironhack.ironLibrary.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "issue")
 @Data
@@ -12,8 +15,13 @@ public class Issue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer issueId;
-    private String issueDate;
-    private String returnDate;
+
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime issueDate;
+
+    @Setter(AccessLevel.NONE)
+    private LocalDateTime returnDate;
+
     @OneToOne
     @JoinColumn(name = "usn")
     private Student issueStudent;
@@ -21,10 +29,10 @@ public class Issue {
     @JoinColumn(name = "isbn")
     private Book issueBook;
 
-    public Issue(String issueDate, String returnDate, Student issueStudent, Book issueBook) {
-        this.issueDate = issueDate;
-        this.returnDate = returnDate;
-        this.issueStudent = issueStudent;
-        this.issueBook = issueBook;
+    public Issue(Student issueStudent, Book issueBook) {
+        this.issueDate = LocalDateTime.now();
+        this.returnDate = issueDate.plusDays(7);
+        setIssueStudent(issueStudent);
+        setIssueBook(issueBook);
     }
 }
