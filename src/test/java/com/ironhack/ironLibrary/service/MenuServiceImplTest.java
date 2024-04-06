@@ -5,6 +5,7 @@ import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.repository.AuthorRepository;
 import com.ironhack.ironLibrary.repository.BookRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
+import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -123,11 +125,41 @@ class MenuServiceImplTest {
         assertEquals("g.kim@gmail.com", savedAuthor.getEmail());
     }
 
+    @Test
+    void searchBookByAuthor() {
+        List<String> validInformation = Arrays.asList(
+                "978-84-415-4302-0",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "10"
+        );
+        assertDoesNotThrow(() -> menuService.addBook(validInformation));
+        try{
+           Book book = menuService.searchBookByAuthor("Gene Kim");
+            assertEquals("The fenix project", book.getTitle());
+            assertEquals("978-84-415-4302-0", book.getIsbn());
+
+        }catch (NoBookFoundException e){
+            fail("An NoBookFoundException exception was thrown when it was not expected.");
+        }
+    }
+
+
+    @Test
+    void setBookByAuthorGoesWrong(){
+        String authorName = "Paco Wall";
+        NoBookFoundException exception = assertThrows(NoBookFoundException.class, () -> menuService.searchBookByAuthor(authorName));
+        assertEquals("No book found for author: " + authorName, exception.getMessage());
+    }
+
     @AfterEach
     void tearDown() {
 
         authorRepository.deleteAll();
         bookRepository.deleteAll();
     }
+
 
 }
