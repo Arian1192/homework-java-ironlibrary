@@ -3,6 +3,7 @@ package com.ironhack.ironLibrary.service;
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
+import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class MenuServiceImpl  implements IMenuService{
@@ -91,6 +93,30 @@ public class MenuServiceImpl  implements IMenuService{
             bookService.save(newBook);
         }
     }
+
+    public Book searchBookByAuthor(String authorName) throws NoBookFoundException {
+        if (!Validator.validateStringGeneralFormat(authorName)) {
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        }
+        Optional<Book> optionalBook = authorService.findBookByAuthor(authorName);
+        if (optionalBook.isPresent()) {
+            return optionalBook.get();
+        } else {
+            throw new NoBookFoundException("No book found for author: " + authorName);
+        }
+    }
+
+    public List<Book> searchBookByCategory(String category) throws NoBookFoundException {
+        if(!Validator.validateStringGeneralFormat(category)) throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+       Optional<List<Book>> optionalBookList = bookService.findAllByCategory(category);
+       if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
+           return optionalBookList.get();
+       }else{
+           throw new NoBookFoundException("No books found for this category: " + category);
+       }
+    }
+
 }
+
 
 
