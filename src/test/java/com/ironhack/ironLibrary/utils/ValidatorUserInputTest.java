@@ -9,8 +9,6 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-
-
 @SpringBootTest
 public class ValidatorUserInputTest {
 

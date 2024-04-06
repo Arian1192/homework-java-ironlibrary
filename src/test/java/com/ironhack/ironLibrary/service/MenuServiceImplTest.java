@@ -3,6 +3,7 @@ package com.ironhack.ironLibrary.service;
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.repository.AuthorRepository;
+import com.ironhack.ironLibrary.repository.BookRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class MenuServiceImplTest {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
 
     @Test
@@ -121,7 +125,9 @@ class MenuServiceImplTest {
 
     @AfterEach
     void tearDown() {
+
         authorRepository.deleteAll();
+        bookRepository.deleteAll();
     }
 
 }
