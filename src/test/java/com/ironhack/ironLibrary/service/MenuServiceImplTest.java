@@ -126,7 +126,7 @@ class MenuServiceImplTest {
     }
 
     @Test
-    void searchBookByAuthor() {
+    void testSearchBookByAuthor() {
         List<String> validInformation = Arrays.asList(
                 "978-84-415-4302-0",
                 "The fenix project",
@@ -148,10 +148,17 @@ class MenuServiceImplTest {
 
 
     @Test
-    void setBookByAuthorGoesWrong(){
+    void testGetBookByAuthorGoesWrong(){
         String authorName = "Paco Wall";
         NoBookFoundException exception = assertThrows(NoBookFoundException.class, () -> menuService.searchBookByAuthor(authorName));
         assertEquals("No book found for author: " + authorName, exception.getMessage());
+    }
+
+    @Test
+    void testGetBookByAuthorGoesWrongWhenAuthorNameIsAnEmptyString(){
+        String authorName = "";
+        InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class, () -> menuService.searchBookByAuthor(authorName));
+        assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
     }
 
     @AfterEach
