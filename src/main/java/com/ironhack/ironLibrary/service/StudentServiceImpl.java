@@ -15,8 +15,7 @@ public class StudentServiceImpl implements IStudentService{
     private StudentRepository studentRepository;
 
     @Override
-    public Student findStudentByUsn(String usn) {
-        return studentRepository.findByUsn(usn).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid usn"));
+    public Optional<Student> findStudentByUsn(String usn) {
+        return studentRepository.findByUsn(usn);
     }
 }

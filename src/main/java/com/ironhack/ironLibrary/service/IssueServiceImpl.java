@@ -15,13 +15,7 @@ public class IssueServiceImpl implements  IIssueService{
     @Autowired
     private IssueRepository issueRepository;
     @Override
-    public List<Object[]> findAllBooksAndIssuesByUsn(String usn){
-        Optional<List<Object[]>> optionalObjectsList = issueRepository.findAllBooksAndIssuesByUsn(usn);
-        if (optionalObjectsList.isPresent()){
-            return optionalObjectsList.get();
-        } else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid usn"));
-        }
+    public Optional<List<Object[]>> findAllBooksAndIssuesByUsn(String usn){
+        return issueRepository.findAllBooksAndIssuesByUsn(usn);
     }
-
 }

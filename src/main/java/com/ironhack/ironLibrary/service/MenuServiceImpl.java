@@ -4,6 +4,7 @@ import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
+import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -15,6 +16,7 @@ import java.util.Scanner;
 
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class MenuServiceImpl  implements IMenuService{
@@ -101,16 +103,43 @@ public class MenuServiceImpl  implements IMenuService{
         }
     }
 
-    public void listBooksByUsn(){
-        try {
-            System.out.print("Enter usn : ");
-            String usn = new Scanner(System.in).nextLine();
-            Student student = studentService.findStudentByUsn(usn);
-            List<Object[]> listObj = issueService.findAllBooksAndIssuesByUsn(student.getUsn());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    public Book searchBookByAuthor(String authorName) throws NoBookFoundException {
+        if (!Validator.validateStringGeneralFormat(authorName)) {
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        }
+        Optional<Book> optionalBook = authorService.findBookByAuthor(authorName);
+        if (optionalBook.isPresent()) {
+            return optionalBook.get();
+        } else {
+            throw new NoBookFoundException("No book found for author: " + authorName);
+        }
+    }
+
+    public List<Book> searchBookByCategory(String category) throws NoBookFoundException {
+        if(!Validator.validateStringGeneralFormat(category)) throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+       Optional<List<Book>> optionalBookList = bookService.findAllByCategory(category);
+       if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
+           return optionalBookList.get();
+       }else{
+           throw new NoBookFoundException("No books found for this category: " + category);
+       }
+    }
+
+    public List<Object[]> searchBooksByUsn(String usn) throws Exception {
+        Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
+        if(optionalStudent.isPresent()){
+            Student student = optionalStudent.get();
+            Optional<List<Object[]>> optionalObjects = issueService.findAllBooksAndIssuesByUsn(student.getUsn());
+            if (optionalObjects.isPresent()){
+                return optionalObjects.get();
+            }else{
+                throw new NoBookFoundException("No books found for this usn: " + usn);
+            }
+        }else{
+            throw new Exception("No student found for this usn: " + usn);
         }
     }
 }
+
 
 
