@@ -99,4 +99,16 @@ class BookRepositoryTest {
         Optional<Book> maybeBook = bookRepository.findOneByTitle("The unicorn project");
         maybeBook.ifPresent(book -> assertNotEquals("The fenix project", book.getTitle()));
     }
+
+    @Test
+    void testFindByIsbn_HappyPath(){
+        Optional<Book> maybeBook = bookRepository.findByIsbn("978-84-415-4301-0");
+        maybeBook.ifPresent(book -> assertEquals("The unicorn project", book.getTitle()));
+    }
+
+    @Test
+    void testFindByIsbn_NegativePath_NonISBNRegisteredOnDataBase(){
+        Optional<Book> optionalBook = bookRepository.findByIsbn("978-84-415-4301-1");
+        assertTrue(optionalBook.isEmpty(), "Expected Optional<Book> to be empty");
+    }
 }
