@@ -2,7 +2,9 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.repository.AuthorRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +25,10 @@ class MenuServiceImplTest {
 
     @Autowired
     private IMenuService menuService;
+
+    @Autowired
+    private AuthorRepository authorRepository;
+    
 
     @Test
     public void testAddBookWithValidInformation() {
@@ -111,6 +117,11 @@ class MenuServiceImplTest {
         assertNotNull(savedAuthor);
         assertEquals("Gene Kim", savedAuthor.getName());
         assertEquals("g.kim@gmail.com", savedAuthor.getEmail());
+    }
+
+    @AfterEach
+    void tearDown() {
+        authorRepository.deleteAll();
     }
 
 }
