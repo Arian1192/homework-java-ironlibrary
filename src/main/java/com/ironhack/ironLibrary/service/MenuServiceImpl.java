@@ -106,6 +106,16 @@ public class MenuServiceImpl  implements IMenuService{
         }
     }
 
+    public List<Book> searchBookByCategory(String category) throws NoBookFoundException {
+        if(!Validator.validateStringGeneralFormat(category)) throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+       Optional<List<Book>> optionalBookList = bookService.findAllByCategory(category);
+       if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
+           return optionalBookList.get();
+       }else{
+           throw new NoBookFoundException("No books found for this category: " + category);
+       }
+    }
+
 }
 
 

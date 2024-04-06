@@ -6,6 +6,10 @@ import java.util.List;
 public interface IMenuService {
     void addBook (List<String> bookAndAuthorInformation);
     List<String> getNewBookInformation();
+
     Book searchBookByAuthor(String authorName) throws NoBookFoundException;
+
+
+    List<Book> searchBookByCategory(String Category) throws NoBookFoundException;
 
 }
