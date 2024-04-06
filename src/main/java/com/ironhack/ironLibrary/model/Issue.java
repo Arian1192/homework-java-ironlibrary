@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "issue")
@@ -35,4 +36,5 @@ public class Issue {
         setIssueStudent(issueStudent);
         setIssueBook(issueBook);
     }
+
 }

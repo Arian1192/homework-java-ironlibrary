@@ -2,6 +2,7 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import com.ironhack.ironLibrary.utils.Validator;
@@ -22,6 +24,12 @@ public class MenuServiceImpl  implements IMenuService{
     private IAuthorService authorService;
     @Autowired
     private IBookService bookService;
+
+    @Autowired
+    private IStudentService studentService;
+
+    @Autowired
+    private IIssueService iIssueService;
 
     /**
      * TODO Testing
@@ -116,6 +124,36 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
+    @Override
+    public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
+        String usn = issueData.get(0);
+        String name = issueData.get(1);
+        String isbn = issueData.get(2);
+
+        if (!Validator.checkISBNFormat(isbn)
+                || !Validator.validateStringGeneralFormat(name)
+        ) {
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        }
+
+        Optional<Student> optionalStudent = studentService.findStudentByUsnAndName(usn,name);
+        if(optionalStudent.isEmpty()){
+            studentService.save(usn, name);
+        }else{
+            Student student = optionalStudent.get();
+            Book book = bookService.findByIsbn(isbn).orElseThrow(() -> new NoBookFoundException("No books are found with that ISBN"));
+            if (book.getQuantity() < 1) {
+                throw new NoBookFoundException("Quantity unavailable");
+            } else {
+                book.setQuantity(book.getQuantity() - 1);
+                bookService.save(book);
+                iIssueService.save(student, book);
+                // Update book quantity
+
+            }
+
+        }
+    }
 }
 
 
