@@ -11,4 +11,6 @@ public interface IssueRepository extends JpaRepository<Issue, String> {
     @Query("SELECT b from Issue i JOIN i.issueStudent c JOIN i.issueBook b WHERE c.usn = ?1")
     Optional<List<Book>> findAllBooksByUsn(String Usn);
 
+    @Query("SELECT b, i FROM Issue i JOIN i.issueStudent c JOIN i.issueBook b WHERE c.usn = ?1")
+    Optional<List<Object[]>> findAllBooksAndIssuesByUsn(String usn);
 }

@@ -1,0 +1,22 @@
+package com.ironhack.ironLibrary.service;
+
+import com.ironhack.ironLibrary.model.Student;
+import com.ironhack.ironLibrary.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
+
+@Service
+public class StudentServiceImpl implements IStudentService{
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Override
+    public Student findStudentByUsn(String usn) {
+        return studentRepository.findByUsn(usn).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid usn"));
+    }
+}

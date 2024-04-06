@@ -2,6 +2,7 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +23,12 @@ public class MenuServiceImpl  implements IMenuService{
     private IAuthorService authorService;
     @Autowired
     private IBookService bookService;
+
+    @Autowired
+    private IStudentService studentService;
+
+    @Autowired
+    private IIssueService issueService;
 
     /**
      * TODO Testing
@@ -89,6 +98,17 @@ public class MenuServiceImpl  implements IMenuService{
         }else{
             authorService.save(author);
             bookService.save(newBook);
+        }
+    }
+
+    public void listBooksByUsn(){
+        try {
+            System.out.print("Enter usn : ");
+            String usn = new Scanner(System.in).nextLine();
+            Student student = studentService.findStudentByUsn(usn);
+            List<Object[]> listObj = issueService.findAllBooksAndIssuesByUsn(student.getUsn());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

@@ -48,7 +48,6 @@ public class DataOutputTest {
 
         issue1 = new Issue(student1, book1);
         issue2 = new Issue(student2, book2);
-
     }
 
 
@@ -60,7 +59,6 @@ public class DataOutputTest {
         asciiTable.setTextAlignment(TextAlignment.LEFT);
         asciiTable.addRow("Book ISBN", "Book Title", "Category", "No of Books");
         asciiTable.addRow(book1.getIsbn(), book1.getTitle(), book1.getCategory(), book1.getQuantity());
-
         assertEquals(asciiTable.render(), DataOutput.oneBookTable(book1));
     }
 
@@ -91,7 +89,6 @@ public class DataOutputTest {
     @Test
     @DisplayName("Validate listBookTableWithAuthor output")
     void listBookTableWithAuthorTest(){
-
         List<Object[]> lstObjects= new ArrayList<>();
         lstObjects.add(new Object[]{book1, author1});
         lstObjects.add(new Object[]{book2, author2});
@@ -117,7 +114,22 @@ public class DataOutputTest {
                 DataOutput.bookIssuedDate(issue1));
     }
 
-    //TODO: test Validate listBookTableByUsn
+    @Test
+    @DisplayName("Validate listBookTableByUsn output")
+    void listBookTableByUsnTest(){
+        List<Object[]> lstObjects= new ArrayList<>();
+        lstObjects.add(new Object[]{book1, issue1});
 
-
+        AsciiTable asciiTable = new AsciiTable();
+        asciiTable.getContext().setGridTheme(TA_GridThemes.NONE);
+        asciiTable.setTextAlignment(TextAlignment.LEFT);
+        asciiTable.addRow("Book Title", "Student Name", "Return date");
+        for (Object[] obj : lstObjects){
+            Book book = (Book) obj[0];
+            Issue issue = (Issue) obj[1];
+            asciiTable.addRow(book.getTitle(), student1.getName(),
+                    DateFormatter.simpleDateFormat(issue.getReturnDate()));
+        }
+        assertEquals(asciiTable.render(), DataOutput.listBookTableByUsn(lstObjects, student1));
+    }
 }
