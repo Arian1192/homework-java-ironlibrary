@@ -12,4 +12,7 @@ public interface IMenuService {
     List<Book> searchBookByCategory(String Category) throws NoBookFoundException;
 
     void issueBookToStudent(List<String> issueInformation) throws NoBookFoundException;
+
+    List<Object[]>  searchBooksAlongAuthors() throws NoBookFoundException;
+
 }

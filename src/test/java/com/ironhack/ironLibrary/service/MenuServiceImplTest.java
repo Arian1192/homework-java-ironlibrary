@@ -316,4 +316,44 @@ class MenuServiceImplTest {
     }
 
 
+    @Test
+    void searchBooksAlongAuthors() {
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "10"
+        );
+        List<String> bookData1 = Arrays.asList(
+                "978-84-415-4303-1",
+                "Harry potter y la piedra filosofal",
+                "comedy",
+                "JK ROWLING",
+                "jk.rowling@gmail.com",
+                "2"
+        );
+        menuService.addBook(bookData);
+        menuService.addBook(bookData1);
+        try{
+            List<Object[]> listOffBooksAlongWithAuthor = menuService.searchBooksAlongAuthors();
+            assertEquals(2, listOffBooksAlongWithAuthor.size());
+            Object[] bookAlongWithAuthor = listOffBooksAlongWithAuthor.get(0);
+            Author author = (Author) bookAlongWithAuthor[1];
+            Book book = (Book) bookAlongWithAuthor[0];
+            assertEquals("novel", book.getCategory());
+            assertEquals("Gene Kim", author.getName());
+            Object[] bookAlongWithAuthor2 = listOffBooksAlongWithAuthor.get(1);
+            Author author1 = (Author) bookAlongWithAuthor2[1];
+            Book book1 = (Book) bookAlongWithAuthor2[0];
+            assertEquals("comedy", book1.getCategory());
+            assertEquals("JK ROWLING", author1.getName());
+
+
+
+        }catch(NoBookFoundException e){
+            fail("An NoBookFoundException exception was thrown when it was not expected.");
+        }
+    }
 }
