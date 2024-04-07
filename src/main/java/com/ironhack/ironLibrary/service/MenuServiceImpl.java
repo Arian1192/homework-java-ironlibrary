@@ -2,6 +2,7 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,12 @@ public class MenuServiceImpl  implements IMenuService{
     private IAuthorService authorService;
     @Autowired
     private IBookService bookService;
+
+    @Autowired
+    private IStudentService studentService;
+
+    @Autowired
+    private IIssueService issueService;
 
     /**
      * TODO Testing
@@ -116,6 +125,20 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
+    public List<Object[]> searchBooksByUsn(String usn) throws Exception {
+        Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
+        if(optionalStudent.isPresent()){
+            Student student = optionalStudent.get();
+            Optional<List<Object[]>> optionalObjects = issueService.findAllBooksAndIssuesByUsn(student.getUsn());
+            if (optionalObjects.isPresent()){
+                return optionalObjects.get();
+            }else{
+                throw new NoBookFoundException("No books found for this usn: " + usn);
+            }
+        }else{
+            throw new Exception("No student found for this usn: " + usn);
+        }
+    }
 }
 
 
