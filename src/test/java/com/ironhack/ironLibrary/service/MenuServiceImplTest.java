@@ -2,8 +2,10 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.repository.AuthorRepository;
 import com.ironhack.ironLibrary.repository.BookRepository;
+import com.ironhack.ironLibrary.repository.IssueRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +28,11 @@ class MenuServiceImplTest {
 
     @Autowired
     private IAuthorService authorService;
+    @Autowired
+    private IIssueService issueService;
+
+    @Autowired
+    private IStudentService studentService;
 
     @Autowired
     private IMenuService menuService;
@@ -35,6 +42,11 @@ class MenuServiceImplTest {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private IssueRepository issueRepository;
+
+
 
 
     @Test
@@ -215,10 +227,93 @@ class MenuServiceImplTest {
         assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
     }
 
+    @Test
+    void testIssueBookToStudentGoWrongWithAIsbnWrong(){
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-5302-1"
+        );
+        studentService.save(issueData.get(0), issueData.get(1));
+        NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("No books are found with that ISBN", exception.getMessage());
+
+    }
+
+
+    @Test
+    void testIssueBookToStudentGoWrongWithAUsnWrong(){
+        List<String> issueData = Arrays.asList(
+                "3",
+                "Pedro",
+                "978-84-415-5302-1"
+        );
+        studentService.save(issueData.get(0), issueData.get(1));
+        InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
+
+    }
+
+    @Test
+    void testIssueBookToStudentGoWrongWithUnavailableQuantity(){
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-4302-1"
+        );
+
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "0"
+        );
+        menuService.addBook(bookData);
+        studentService.save(issueData.get(0), issueData.get(1));
+        NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("Quantity unavailable", exception.getMessage());
+
+    }
+
+
+
+    @Test
+    void testIssueBookToStudent() {
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-4302-1"
+        );
+
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "10"
+        );
+        menuService.addBook(bookData);
+        studentService.save(issueData.get(0), issueData.get(1));
+        assertDoesNotThrow(() -> menuService.issueBookToStudent(issueData));
+        String usn = issueData.get(0);
+        Optional<List<Book>> optionalBookList = issueService.findAllBooksIssuedByUsn(usn);
+        if(optionalBookList.isPresent()){
+            List<Book> bookList = optionalBookList.get();
+            assertEquals(1, bookList.size());
+            assertEquals(9, bookList.get(0).getQuantity());
+        }
+    }
+
+
     @AfterEach
     void tearDown() {
-
+        issueRepository.deleteAll();
         authorRepository.deleteAll();
         bookRepository.deleteAll();
     }
+
+
 }

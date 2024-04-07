@@ -37,4 +37,18 @@ class ValidatorTest {
     void isCheckEmailInvalid_when_incorrect_Email(String email) {
         assertFalse(Validator.checkEmailFormat(email));
     }
+
+    @Test
+    @DisplayName("Should return True with Correct usn")
+    void testShouldReturnTrueCheckUsnFormat() {
+        assertTrue(Validator.checkUsnFormat("09003688800"));
+    }
+
+    @Test
+    @DisplayName("Should return False with Incorrect usn")
+    void testShouldReturnFalseCheckUsnFormatWithWrongUsn(){
+            assertFalse(Validator.checkUsnFormat("3"));
+    }
+
+
 }

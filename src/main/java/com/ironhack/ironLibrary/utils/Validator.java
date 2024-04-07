@@ -6,6 +6,10 @@ import java.util.regex.Pattern;
 
 public class Validator {
 
+    public static boolean checkUsnFormat(String usn){
+        return patternMatches(usn, "^\\d{11}$");
+    }
+
     public static boolean checkISBNFormat(String maybeISBN){
         return patternMatches(maybeISBN, "^(?=(?:\\D*\\d){10}(?:(?:\\D*\\d){3})?$)[\\d-]+$");
     }

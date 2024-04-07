@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
@@ -30,7 +31,8 @@ public class MenuServiceImpl  implements IMenuService{
     private IStudentService studentService;
 
     @Autowired
-    private IIssueService issueService;
+    private IIssueService iIssueService;
+
 
     /**
      * TODO Testing
@@ -125,6 +127,39 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
+
+    @Override
+    public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
+        String usn = issueData.get(0);
+        String name = issueData.get(1);
+        String isbn = issueData.get(2);
+
+        if (!Validator.checkISBNFormat(isbn)
+                || !Validator.validateStringGeneralFormat(name)
+                || !Validator.checkUsnFormat(usn)
+        ) {
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        }
+
+        Optional<Student> optionalStudent = studentService.findStudentByUsnAndName(usn,name);
+        if(optionalStudent.isEmpty()){
+            studentService.save(usn, name);
+        }else{
+            Student student = optionalStudent.get();
+            Book book = bookService.findByIsbn(isbn).orElseThrow(() -> new NoBookFoundException("No books are found with that ISBN"));
+            if (book.getQuantity() < 1) {
+                throw new NoBookFoundException("Quantity unavailable");
+            } else {
+                book.setQuantity(book.getQuantity() - 1);
+                bookService.save(book);
+                iIssueService.save(student, book);
+                // Update book quantity
+
+            }
+        }
+      }
+
+
     public List<Object[]> searchBooksByUsn(String usn) throws Exception {
         Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
         if(optionalStudent.isPresent()){
@@ -137,6 +172,7 @@ public class MenuServiceImpl  implements IMenuService{
             }
         }else{
             throw new Exception("No student found for this usn: " + usn);
+
         }
     }
 }
