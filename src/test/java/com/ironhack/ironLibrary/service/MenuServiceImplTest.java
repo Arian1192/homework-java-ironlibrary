@@ -228,6 +228,58 @@ class MenuServiceImplTest {
     }
 
     @Test
+    void testIssueBookToStudentGoWrongWithAIsbnWrong(){
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-5302-1"
+        );
+        studentService.save(issueData.get(0), issueData.get(1));
+        NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("No books are found with that ISBN", exception.getMessage());
+
+    }
+
+
+    @Test
+    void testIssueBookToStudentGoWrongWithAUsnWrong(){
+        List<String> issueData = Arrays.asList(
+                "3",
+                "Pedro",
+                "978-84-415-5302-1"
+        );
+        studentService.save(issueData.get(0), issueData.get(1));
+        InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
+
+    }
+
+    @Test
+    void testIssueBookToStudentGoWrongWithUnavailableQuantity(){
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-4302-1"
+        );
+
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "0"
+        );
+        menuService.addBook(bookData);
+        studentService.save(issueData.get(0), issueData.get(1));
+        NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
+        assertEquals("Quantity unavailable", exception.getMessage());
+
+    }
+
+
+
+    @Test
     void testIssueBookToStudent() {
         List<String> issueData = Arrays.asList(
                 "09003688800",

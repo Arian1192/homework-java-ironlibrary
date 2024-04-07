@@ -132,6 +132,7 @@ public class MenuServiceImpl  implements IMenuService{
 
         if (!Validator.checkISBNFormat(isbn)
                 || !Validator.validateStringGeneralFormat(name)
+                || !Validator.checkUsnFormat(usn)
         ) {
             throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
         }
