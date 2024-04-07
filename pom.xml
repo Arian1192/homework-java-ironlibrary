@@ -63,6 +63,15 @@
 				<version>0.3.2</version>
 			</dependency>
 	</dependencies>
+	<plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<configuration>
+			<arguments>
+				<argument>-Dspring.main.runOnce=true</argument>
+			</arguments>
+		</configuration>
+	</plugin>
 
 	<build>
 		<plugins>
@@ -99,5 +108,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	<plugin>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-maven-plugin</artifactId>
+		<configuration>
+			<arguments>
+				<argument>-Dspring.main.runOnce=true</argument>
+			</arguments>
+		</configuration>
+	</plugin>
 
 </project>
