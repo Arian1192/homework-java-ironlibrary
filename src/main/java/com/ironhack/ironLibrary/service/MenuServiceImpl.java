@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
+
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,7 @@ public class MenuServiceImpl  implements IMenuService{
 
     @Autowired
     private IIssueService iIssueService;
+
 
     /**
      * TODO Testing
@@ -124,6 +127,7 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
+
     @Override
     public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
         String usn = issueData.get(0);
@@ -152,6 +156,22 @@ public class MenuServiceImpl  implements IMenuService{
                 // Update book quantity
 
             }
+        }
+      }
+
+
+    public List<Object[]> searchBooksByUsn(String usn) throws Exception {
+        Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
+        if(optionalStudent.isPresent()){
+            Student student = optionalStudent.get();
+            Optional<List<Object[]>> optionalObjects = issueService.findAllBooksAndIssuesByUsn(student.getUsn());
+            if (optionalObjects.isPresent()){
+                return optionalObjects.get();
+            }else{
+                throw new NoBookFoundException("No books found for this usn: " + usn);
+            }
+        }else{
+            throw new Exception("No student found for this usn: " + usn);
 
         }
     }

@@ -73,6 +73,30 @@ class IssueRepositoryTest {
     }
 
     @Test
+    void shouldFindAllBooksAndIssuesByUsn() {
+        issueRepository.save(dummyIssue);
+        Optional<List<Object[]>> optionalListObject = issueRepository.findAllBooksAndIssuesByUsn(dummyStudent.getUsn());
+        if (optionalListObject.isPresent()) {
+            List<Object[]> listObject = optionalListObject.get();
+            Object[] firstElement = listObject.get(0);
+            Book book = (Book) firstElement[0];
+            Issue issue = (Issue) firstElement[1];
+            assertEquals(1, listObject.size());
+            assertEquals("The unicorn project", book.getTitle());
+            assertEquals("Pedro", issue.getIssueStudent().getName());
+        }
+    }
+
+    @Test
+    void shouldNotFindBooksAndIssuesByUsn() {
+        Optional<List<Object[]>> optionalListObject = issueRepository.findAllBooksAndIssuesByUsn(dummyStudent.getUsn());
+        if (optionalListObject.isPresent()) {
+            List<Object[]> listObject = optionalListObject.get();
+            assertEquals(0, listObject.size());
+        }
+    }
+
+    @Test
     void saveItemTest() {
         assertEquals(1, issueRepository.count());
     }

@@ -51,14 +51,12 @@ public class DataOutput {
         return "Book issued. Return date : " + DateFormatter.largeDateFormat(issue.getReturnDate());
     }
 
-    //TODO: check this method - check inputs?
-    public static String listBookTableByUsn(List<Object[]> lstObjects){
+    public static String listBookTableByUsn(List<Object[]> lstObjects, Student student){
         AsciiTable asciiTable = createAsciiTable();
         asciiTable.addRow("Book Title", "Student Name", "Return date");
         for (Object[] obj : lstObjects){
             Book book = (Book) obj[0];
-            Student student = (Student) obj[1];
-            Issue issue = (Issue) obj[2];
+            Issue issue = (Issue) obj[1];
             asciiTable.addRow(book.getTitle(), student.getName(),
                     DateFormatter.simpleDateFormat(issue.getReturnDate()));
         }
