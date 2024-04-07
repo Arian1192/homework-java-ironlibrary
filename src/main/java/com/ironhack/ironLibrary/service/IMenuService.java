@@ -4,6 +4,9 @@ import com.ironhack.ironLibrary.utils.NoBookFoundException;
 
 import java.util.List;
 public interface IMenuService {
+
+    void mainManu() throws Exception;
+
     void addBook (List<String> bookAndAuthorInformation);
     List<String> getNewBookInformation();
 

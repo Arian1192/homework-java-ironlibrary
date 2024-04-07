@@ -1,19 +1,18 @@
 package com.ironhack.ironLibrary.service;
 
+import com.ironhack.ironLibrary.IronLibraryApplication;
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Issue;
 import com.ironhack.ironLibrary.model.Student;
+import com.ironhack.ironLibrary.utils.DataOutput;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.sql.SQLOutput;
+import java.util.*;
 
 import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class MenuServiceImpl  implements IMenuService{
     private IStudentService studentService;
 
     @Autowired
-    private IIssueService iIssueService;
+    private IIssueService issueService;
 
 
     /**
@@ -63,6 +62,20 @@ public class MenuServiceImpl  implements IMenuService{
         return bookAndAuthorDetails;
     }
 
+    public List<String> getNewIssueInformation(){
+
+        List <String> issueDetails = new ArrayList<>();
+        String usn = Validator.userInput("Enter usn: ", true, "validateInteger",
+                "The quantity only accepts numbers");
+        issueDetails.add(usn);
+        String studentName = Validator.userInput("Enter name: ", true, "validateStringGeneralFormat",
+                "The author name only accepts letters");
+        issueDetails.add(studentName);
+        String isbn = Validator.userInput("Enter book ISBN: ",true, "checkISBNFormat",
+                "The ISBN must follow the next format: 978-92-95055-02-5");
+        issueDetails.add(isbn);
+        return issueDetails;
+    }
 
     public void  addBook(List<String> bookAndAuthorInformation) {
 
@@ -152,7 +165,7 @@ public class MenuServiceImpl  implements IMenuService{
             } else {
                 book.setQuantity(book.getQuantity() - 1);
                 bookService.save(book);
-                iIssueService.save(student, book);
+                issueService.save(student, book);
                 // Update book quantity
 
             }
@@ -180,6 +193,123 @@ public class MenuServiceImpl  implements IMenuService{
     public List<Object[]> searchBooksAlongAuthors() throws NoBookFoundException {
         return authorService.findAllBooksWithAuthors().orElseThrow(()-> new NoBookFoundException("No Books are found"));
     }
+
+    @Override
+    public void mainManu() throws Exception {
+        System.out.println("Welcome to Iron Library book management system!!");
+        System.out.println("Please access one of the following options");
+        Scanner scanner = new Scanner(System.in);
+        int userInput = 0;
+        boolean errorHandling = false;
+        printMenuOptions();
+
+        do{
+            while (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a number from 1 to 8.");
+                scanner.next();
+            }
+            userInput = scanner.nextInt();
+
+            if (userInput < 1 || userInput > 8) {
+                System.out.println("Invalid input. Please enter a number from 1 to 8.");
+            } else {
+                errorHandling = executeMenuOption(userInput);
+                if (userInput != 8) {
+                    printMenuOptions();
+                }
+            }
+        }while(userInput != 8 || !errorHandling);
+
+    }
+
+    private void printMenuOptions(){
+        System.out.println("""
+                Menu:
+                1 - Add a book
+                2 - Search book by title
+                3 - Search book by category
+                4 - Search book by Author
+                5 - List all books along with author
+                6 - Issue book to student
+                7 - List books by usn
+                8 - Exit
+                only digits between 1-8 are available""");
+    }
+
+    private boolean executeMenuOption(int userInput)  {
+        boolean isError = false;
+        switch (userInput){
+            case 1:
+                List<String> bookAndAuthorInformation = getNewBookInformation();
+                addBook(bookAndAuthorInformation);
+                return isError;
+            case 2:
+                System.out.println("option 2");
+                break;
+            case 3:
+                String category = Validator.userInput("Enter category: ", true, "validateStringGeneralFormat",
+                        "The category only accepts letters");
+                List<Book> books = null;
+                try {
+                    books = searchBookByCategory(category);
+                    System.out.println(DataOutput.listBookTable(books));
+                    return isError;
+                } catch (NoBookFoundException e) {
+                    return true;
+                }
+            case 4:
+                String authorName = Validator.userInput("Enter author name: ", true, "validateStringGeneralFormat",
+                        "The author name only accepts letters");
+                Book book = null;
+                try {
+                    book = searchBookByAuthor(authorName);
+                    System.out.println(DataOutput.oneBookTable(book));
+                    return isError;
+                } catch (NoBookFoundException e) {
+                    return true;
+                }
+            case 5:
+                List<Object[]> objects = null;
+                try {
+                    objects = searchBooksAlongAuthors();
+                    System.out.println(DataOutput.listBookTableWithAuthor(objects));
+                    return isError;
+                } catch (NoBookFoundException e) {
+                    return true;
+                }
+            case 6:
+                List <String> issueData = getNewIssueInformation();
+                try {
+                    issueBookToStudent(issueData);
+                    return isError;
+                } catch (NoBookFoundException e) {
+                    return true;
+                }
+            case 7:
+                String usn = Validator.userInput("Enter usn: ", true, "validateInteger",
+                        "The quantity only accepts numbers");
+                try {
+                    List <Object[]> info = searchBooksByUsn(usn);
+                    Object[] firstElement = info.get(0);
+                    Issue issue = (Issue) firstElement[1];
+                    Student student = issue.getIssueStudent();
+                    System.out.println(DataOutput.listBookTableByUsn(info, student));
+                    return isError;
+                } catch (Exception e) {
+                    return true;
+                }
+            case 8:
+                System.out.println("Thanks for use our application :)");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Invalid input. Please enter a number from 1 to 8.");
+        }
+        return isError;
+    }
+
+
+
 }
 
 
