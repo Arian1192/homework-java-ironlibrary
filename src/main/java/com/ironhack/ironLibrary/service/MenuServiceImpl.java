@@ -175,6 +175,11 @@ public class MenuServiceImpl  implements IMenuService{
 
         }
     }
+
+    @Override
+    public List<Object[]> searchBooksAlongAuthors() throws NoBookFoundException {
+        return authorService.findAllBooksWithAuthors().orElseThrow(()-> new NoBookFoundException("No Books are found"));
+    }
 }
 
 
