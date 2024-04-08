@@ -138,6 +138,16 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
+    public List<Book> searchBookByTitle(String title) throws NoBookFoundException {
+        if(!Validator.validateStringGeneralFormat(title)) throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        Optional<List<Book>> optionalBookList = bookService.findAllByTitle(title);
+        if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
+            return optionalBookList.get();
+        }else{
+            throw new NoBookFoundException("No books found for this category: " + title);
+        }
+    }
+
     public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
         String usn = issueData.get(0);
         String name = issueData.get(1);
@@ -235,8 +245,16 @@ public class MenuServiceImpl  implements IMenuService{
                 addBook(bookAndAuthorInformation);
                 return isError;
             case 2:
-                System.out.println("option 2");
-                break;
+                String title = Validator.userInput("Enter title: ", false, "NULL", "NULL");
+                List<Book> booksByTitle = null;
+                try {
+                    booksByTitle = searchBookByTitle(title);
+                    System.out.println(DataOutput.listBookTable(booksByTitle));
+                    return isError;
+                } catch (NoBookFoundException e) {
+                    System.out.println(e.getMessage());
+                    return true;
+                }
             case 3:
                 String category = Validator.userInput("Enter category: ", true, "validateStringGeneralFormat",
                         "The category only accepts letters");
