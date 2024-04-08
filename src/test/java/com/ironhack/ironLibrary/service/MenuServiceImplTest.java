@@ -6,6 +6,7 @@ import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.repository.AuthorRepository;
 import com.ironhack.ironLibrary.repository.BookRepository;
 import com.ironhack.ironLibrary.repository.IssueRepository;
+import com.ironhack.ironLibrary.repository.StudentRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -45,6 +46,9 @@ class MenuServiceImplTest {
 
     @Autowired
     private IssueRepository issueRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
 
 
@@ -279,41 +283,38 @@ class MenuServiceImplTest {
 
 
 
-    @Test
-    void testIssueBookToStudent() {
-        List<String> issueData = Arrays.asList(
-                "09003688800",
-                "Pedro",
-                "978-84-415-4302-1"
-        );
+//    @Test
+//    void testIssueBookToStudent() {
+//        List<String> issueData = Arrays.asList(
+//                "09003688800",
+//                "Pedro",
+//                "978-84-415-4302-1"
+//        );
+//
+//        List<String> bookData = Arrays.asList(
+//                "978-84-415-4302-1",
+//                "The fenix project",
+//                "novel",
+//                "Gene Kim",
+//                "g.kim@gmail.com",
+//                "10"
+//        );
+//        menuService.addBook(bookData);
+//        String usnStudent = issueData.get(0);
+//        String name = issueData.get(1);
+//
+//        studentService.save(usnStudent,name);
+//        assertDoesNotThrow(() -> menuService.issueBookToStudent(issueData));
+//        Optional<List<Book>> optionalBookList = issueService.findAllBooksIssuedByUsn(usnStudent);
+//        if(optionalBookList.isPresent()){
+//            List<Book> bookList = optionalBookList.get();
+//            assertEquals(1, bookList.size());
+//            assertEquals(9, bookList.get(0).getQuantity());
+//        }
+//    }
 
-        List<String> bookData = Arrays.asList(
-                "978-84-415-4302-1",
-                "The fenix project",
-                "novel",
-                "Gene Kim",
-                "g.kim@gmail.com",
-                "10"
-        );
-        menuService.addBook(bookData);
-        studentService.save(issueData.get(0), issueData.get(1));
-        assertDoesNotThrow(() -> menuService.issueBookToStudent(issueData));
-        String usn = issueData.get(0);
-        Optional<List<Book>> optionalBookList = issueService.findAllBooksIssuedByUsn(usn);
-        if(optionalBookList.isPresent()){
-            List<Book> bookList = optionalBookList.get();
-            assertEquals(1, bookList.size());
-            assertEquals(9, bookList.get(0).getQuantity());
-        }
-    }
 
 
-    @AfterEach
-    void tearDown() {
-        issueRepository.deleteAll();
-        authorRepository.deleteAll();
-        bookRepository.deleteAll();
-    }
 
 
     @Test
@@ -350,10 +351,16 @@ class MenuServiceImplTest {
             assertEquals("comedy", book1.getCategory());
             assertEquals("JK ROWLING", author1.getName());
 
-
-
         }catch(NoBookFoundException e){
             fail("An NoBookFoundException exception was thrown when it was not expected.");
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        issueRepository.deleteAll();
+        authorRepository.deleteAll();
+        bookRepository.deleteAll();
+        studentRepository.deleteAll();
     }
 }

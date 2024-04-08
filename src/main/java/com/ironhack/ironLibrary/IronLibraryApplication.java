@@ -2,6 +2,7 @@ package com.ironhack.ironLibrary;
 
 import com.ironhack.ironLibrary.service.IMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +10,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class IronLibraryApplication implements CommandLineRunner {
 
+	@Value("${app.menu.enabled}")
+	private boolean isMenuEnabled;
 	@Autowired
 	IMenuService menuService;
 
@@ -19,7 +22,9 @@ public class IronLibraryApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		menuService.mainManu();
+		if (isMenuEnabled) {
+			menuService.mainManu();
+		}
 	}
 }
 
