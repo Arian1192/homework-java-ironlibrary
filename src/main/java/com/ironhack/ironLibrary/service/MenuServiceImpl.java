@@ -31,7 +31,7 @@ public class MenuServiceImpl  implements IMenuService{
     private IStudentService studentService;
 
     @Autowired
-    private IIssueService iIssueService;
+    private IIssueService issueService;
 
 
     /**
@@ -152,7 +152,7 @@ public class MenuServiceImpl  implements IMenuService{
             } else {
                 book.setQuantity(book.getQuantity() - 1);
                 bookService.save(book);
-                iIssueService.save(student, book);
+                issueService.save(student, book);
                 // Update book quantity
 
             }
