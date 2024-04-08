@@ -18,8 +18,6 @@ public class Validator {
         return patternMatches(email, "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
     }
 
-
-
     private static boolean patternMatches(String inputString, String regexPattern) {
         return Pattern.compile(regexPattern)
                 .matcher(inputString)
@@ -78,6 +76,9 @@ public class Validator {
                             break;
                         case "notBlankValidatorBooks":
                             result = Validator.notBlankValidatorBooks(userInputText);
+                            break;
+                        case "validateUsnFormat":
+                            result = Validator.checkUsnFormat(userInputText);
                             break;
                     }
                     if(!result){

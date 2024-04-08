@@ -64,8 +64,8 @@ public class MenuServiceImpl  implements IMenuService{
     public List<String> getNewIssueInformation(){
 
         List <String> issueDetails = new ArrayList<>();
-        String usn = Validator.userInput("Enter usn: ", true, "validateInteger",
-                "The quantity only accepts numbers");
+        String usn = Validator.userInput("Enter usn: ", true, "validateUsnFormat",
+                "USN must have 11 digits");
         issueDetails.add(usn);
         String studentName = Validator.userInput("Enter name: ", true, "validateStringGeneralFormat",
                 "The author name only accepts letters");
@@ -82,7 +82,6 @@ public class MenuServiceImpl  implements IMenuService{
             throw new InvalidBookInformationException(
                     "The book and author information must be a six-element string list.");
         }
-
         String isbn = bookAndAuthorInformation.get(0);
         String title = bookAndAuthorInformation.get(1);
         String category = bookAndAuthorInformation.get(2);
@@ -143,29 +142,26 @@ public class MenuServiceImpl  implements IMenuService{
         String usn = issueData.get(0);
         String name = issueData.get(1);
         String isbn = issueData.get(2);
-
         if (!Validator.checkISBNFormat(isbn)
                 || !Validator.validateStringGeneralFormat(name)
                 || !Validator.checkUsnFormat(usn)
         ) {
             throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
         }
-
         Optional<Student> optionalStudent = studentService.findStudentByUsnAndName(usn,name);
         if(optionalStudent.isEmpty()){
             studentService.save(usn, name);
-        }else{
-            Student student = optionalStudent.get();
-            Book book = bookService.findByIsbn(isbn).orElseThrow(() -> new NoBookFoundException("No books are found with that ISBN"));
-            if (book.getQuantity() < 1) {
-                throw new NoBookFoundException("Quantity unavailable");
-            } else {
-                book.setQuantity(book.getQuantity() - 1);
-                bookService.save(book);
-                issueService.save(student, book);
-                // Update book quantity
-
-            }
+            optionalStudent = studentService.findStudentByUsnAndName(usn,name);
+        }
+        Student student = optionalStudent.get();
+        Book book = bookService.findByIsbn(isbn).orElseThrow(() -> new NoBookFoundException("No books are found with that ISBN"));
+        if (book.getQuantity() < 1) {
+            throw new NoBookFoundException("Quantity unavailable");
+        } else {
+            book.setQuantity(book.getQuantity() - 1);
+            bookService.save(book);
+            issueService.save(student, book);
+            // Update book quantity
         }
       }
 
@@ -272,6 +268,7 @@ public class MenuServiceImpl  implements IMenuService{
                     System.out.println(DataOutput.listBookTableWithAuthor(objects));
                     return isError;
                 } catch (NoBookFoundException e) {
+                    System.out.println(e.getMessage());
                     return true;
                 }
             case 6:
@@ -280,11 +277,12 @@ public class MenuServiceImpl  implements IMenuService{
                     issueBookToStudent(issueData);
                     return isError;
                 } catch (NoBookFoundException e) {
+                    System.out.println(e.getMessage());
                     return true;
                 }
             case 7:
-                String usn = Validator.userInput("Enter usn: ", true, "validateInteger",
-                        "The quantity only accepts numbers");
+                String usn = Validator.userInput("Enter usn: ", true, "validateUsnFormat",
+                        "USN must have 11 digits");
                 try {
                     List <Object[]> info = searchBooksByUsn(usn);
                     Object[] firstElement = info.get(0);
@@ -293,6 +291,7 @@ public class MenuServiceImpl  implements IMenuService{
                     System.out.println(DataOutput.listBookTableByUsn(info, student));
                     return isError;
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
                     return true;
                 }
             case 8:
