@@ -12,4 +12,5 @@ public interface IIssueService {
    Issue save(Student student, Book book);
    Optional<List<Book>> findAllBooksIssuedByUsn(String usn);
    public Optional<List<Object[]>> findAllBooksAndIssuesByUsn(String usn);
+   public Optional<Issue> findIssueByIsbn(String isbn);
 }

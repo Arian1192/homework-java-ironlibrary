@@ -24,6 +24,6 @@ public class StudentServiceImpl implements IStudentService{
     @Override
     public Optional<Student> findStudentByUsn(String usn) {
         return studentRepository.findByUsn(usn);
-
     }
+
 }

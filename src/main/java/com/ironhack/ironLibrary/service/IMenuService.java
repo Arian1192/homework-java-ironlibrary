@@ -1,5 +1,6 @@
 package com.ironhack.ironLibrary.service;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Issue;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface IMenuService {
 
     List<Book> searchBookByCategory(String Category) throws NoBookFoundException;
 
-    void issueBookToStudent(List<String> issueInformation) throws NoBookFoundException;
+    Issue issueBookToStudent(List<String> issueInformation) throws NoBookFoundException;
 
     List<Object[]> searchBooksByUsn(String usn) throws Exception;
 

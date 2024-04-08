@@ -222,7 +222,7 @@ class MenuServiceImplTest {
     @Test
     void testIssueBookToStudentGoWrongWithAIsbnWrong(){
         List<String> issueData = Arrays.asList(
-                "09003688800",
+                "09003688801",
                 "Pedro",
                 "978-84-415-5302-1"
         );
@@ -246,7 +246,7 @@ class MenuServiceImplTest {
     @Test
     void testIssueBookToStudentGoWrongWithUnavailableQuantity(){
         List<String> issueData = Arrays.asList(
-                "09003688800",
+                "09003688802",
                 "Pedro",
                 "978-84-415-4302-1"
         );
