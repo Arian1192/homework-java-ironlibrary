@@ -20,12 +20,14 @@ public class IssueServiceImpl implements  IIssueService{
 
     @Override
     public Issue save(Student student, Book book) {
-        return null;
+        return issueRepository.save(new Issue(student, book));
     }
+
     @Override
     public Optional<List<Object[]>> findAllBooksAndIssuesByUsn(String usn){
         return issueRepository.findAllBooksAndIssuesByUsn(usn);
     }
+
     @Override
     public Optional<List<Book>> findAllBooksIssuedByUsn(String usn) {
         return issueRepository.findAllBooksByUsn(usn);

@@ -32,7 +32,6 @@ public class MenuServiceImpl  implements IMenuService{
     @Autowired
     private IIssueService issueService;
 
-
     /**
      * TODO Testing
      * @return
@@ -140,7 +139,6 @@ public class MenuServiceImpl  implements IMenuService{
        }
     }
 
-
     public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
         String usn = issueData.get(0);
         String name = issueData.get(1);
@@ -171,7 +169,6 @@ public class MenuServiceImpl  implements IMenuService{
         }
       }
 
-
     public List<Object[]> searchBooksByUsn(String usn) throws Exception {
         Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
         if(optionalStudent.isPresent()){
@@ -184,7 +181,6 @@ public class MenuServiceImpl  implements IMenuService{
             }
         }else{
             throw new Exception("No student found for this usn: " + usn);
-
         }
     }
 
@@ -306,9 +302,6 @@ public class MenuServiceImpl  implements IMenuService{
         }
         return isError;
     }
-
-
-
 }
 
 
