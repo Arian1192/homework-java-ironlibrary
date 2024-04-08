@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,5 +56,56 @@ class AuthorServiceImplTest {
         assertNotEquals(author1, author2);
     }
 
+    @Test
+    void findBookByAuthorPositiveTest(){
+        Optional<Book> optionalAuthorService = authorService.findBookByAuthor(dummyAuthor.getName());
+        assertTrue(optionalAuthorService.isPresent());
+        Book book = optionalAuthorService.get();
+        assertEquals("The unicorn project", book.getTitle());
+        assertEquals("novel", book.getCategory());
+        assertEquals(dummyBook, book);
+    }
+
+    @Test
+    void findBookByAuthorNegativeTest(){
+        Optional<Book> optionalAuthorService = authorService.findBookByAuthor("Gene Kime");
+        assertFalse(optionalAuthorService.isPresent());
+    }
+
+    @Test
+    void findAllBooksWithAuthorsPositiveTest(){
+        List<Object[]> listObject = new ArrayList<>();
+        List<Author> listAuthor = new ArrayList<>();
+        List<Book> listBook = new ArrayList<>();
+
+        Optional<List<Object[]>> optionalAuthorService = authorService.findAllBooksWithAuthors();
+        assertTrue(optionalAuthorService.isPresent());
+        listObject = optionalAuthorService.get();
+
+        for( Object[] a : listObject){
+            listBook.add((Book) a[0]);
+            listAuthor.add((Author) a[1]);
+        }
+
+        assertEquals("Gene Kim", listAuthor.get(0).getName());
+        assertEquals("The unicorn project", listBook.get(0).getTitle());
+    }
+
+    @Test
+    void findBookByAuthorBookPositiveTest(){
+        Optional<Author> optionalAuthorService = authorService.findByAuthorBook(dummyBook);
+        assertTrue(optionalAuthorService.isPresent());
+        Author author = optionalAuthorService.get();
+        assertEquals("g.kim@gmail.com", author.getEmail());
+        assertEquals(dummyBook, author.getAuthorBook());
+        assertEquals(dummyAuthor, author);
+    }
+
+    @Test
+    void findBookByAuthorBookNegativeTest(){
+        Book book = new Book("978-84-415-4200-1", "New Book", "Historical", 12);
+        Optional<Author> optionalAuthorService = authorService.findByAuthorBook(book);
+        assertFalse(optionalAuthorService.isPresent());
+    }
 
 }
