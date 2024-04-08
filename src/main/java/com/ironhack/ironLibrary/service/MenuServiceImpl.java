@@ -144,7 +144,7 @@ public class MenuServiceImpl  implements IMenuService{
         if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
             return optionalBookList.get();
         }else{
-            throw new NoBookFoundException("No books found for this category: " + title);
+            throw new NoBookFoundException("No books found for this author: " + title);
         }
     }
 
