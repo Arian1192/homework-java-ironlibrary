@@ -32,4 +32,10 @@ public class IssueServiceImpl implements  IIssueService{
     public Optional<List<Book>> findAllBooksIssuedByUsn(String usn) {
         return issueRepository.findAllBooksByUsn(usn);
     }
+
+    @Override
+    public Optional<Issue> findIssueByIsbn(String isbn) {
+        return issueRepository.findIssueByIsbn(isbn);
+    }
+
 }

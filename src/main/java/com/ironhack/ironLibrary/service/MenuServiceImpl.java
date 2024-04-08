@@ -5,16 +5,13 @@ import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
 import com.ironhack.ironLibrary.model.Issue;
 import com.ironhack.ironLibrary.model.Student;
-import com.ironhack.ironLibrary.utils.DataOutput;
-import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
-import com.ironhack.ironLibrary.utils.NoBookFoundException;
+import com.ironhack.ironLibrary.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.sql.SQLOutput;
 import java.util.*;
 
-import com.ironhack.ironLibrary.utils.Validator;
 import org.springframework.stereotype.Service;
 
 
@@ -116,7 +113,7 @@ public class MenuServiceImpl  implements IMenuService{
         }
     }
 
-    public Book searchBookByAuthor(String authorName) throws NoBookFoundException {
+    public Book searchBookByAuthor(String authorName) throws NoBookFoundException, InvalidBookInformationException {
         if (!Validator.validateStringGeneralFormat(authorName)) {
             throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
         }
@@ -128,17 +125,20 @@ public class MenuServiceImpl  implements IMenuService{
         }
     }
 
-    public List<Book> searchBookByCategory(String category) throws NoBookFoundException {
-        if(!Validator.validateStringGeneralFormat(category)) throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
-       Optional<List<Book>> optionalBookList = bookService.findAllByCategory(category);
-       if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
+    public List<Book> searchBookByCategory(String category) throws NoBookFoundException,
+            InvalidBookInformationException {
+        if(!Validator.validateStringGeneralFormat(category))
+            throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
+        Optional<List<Book>> optionalBookList = bookService.findAllByCategory(category);
+        if(optionalBookList.isPresent() && !optionalBookList.get().isEmpty()){
            return optionalBookList.get();
-       }else{
+        }else{
            throw new NoBookFoundException("No books found for this category: " + category);
-       }
+        }
     }
 
-    public void issueBookToStudent(List<String> issueData) throws NoBookFoundException {
+    public Issue issueBookToStudent(List<String> issueData) throws InvalidBookInformationException,
+            NoBookFoundException, BookWithActiveIssueException, StudentExistsWithAnotherNameException {
         String usn = issueData.get(0);
         String name = issueData.get(1);
         String isbn = issueData.get(2);
@@ -149,23 +149,39 @@ public class MenuServiceImpl  implements IMenuService{
             throw new InvalidBookInformationException("The provided information is invalid. Please check the format");
         }
         Optional<Student> optionalStudent = studentService.findStudentByUsnAndName(usn,name);
-        if(optionalStudent.isEmpty()){
+        Optional<Student> optionalStudentByUsn = studentService.findStudentByUsn(usn);
+        if(optionalStudent.isPresent()){
+            Student student = optionalStudent.get();
+            if (issueService.findAllBooksIssuedByUsn(student.getUsn()).isPresent()){
+                throw new StudentWithActiveIssueException("Student has an active issue");
+            }
+        } else if(optionalStudentByUsn.isPresent()){
+            Student student = optionalStudentByUsn.get();
+            if (issueService.findAllBooksIssuedByUsn(student.getUsn()).isPresent()){
+                throw new StudentExistsWithAnotherNameException("Usn already exists with another student associated");
+            }
+        } else{
             studentService.save(usn, name);
             optionalStudent = studentService.findStudentByUsnAndName(usn,name);
         }
         Student student = optionalStudent.get();
+
         Book book = bookService.findByIsbn(isbn).orElseThrow(() -> new NoBookFoundException("No books are found with that ISBN"));
+        Issue issue;
         if (book.getQuantity() < 1) {
             throw new NoBookFoundException("Quantity unavailable");
+        } else if (issueService.findIssueByIsbn(book.getIsbn()).isPresent()) {
+            throw new BookWithActiveIssueException("The book has an active issue");
         } else {
             book.setQuantity(book.getQuantity() - 1);
             bookService.save(book);
-            issueService.save(student, book);
+            issue = issueService.save(student, book);
             // Update book quantity
         }
+        return issue;
       }
 
-    public List<Object[]> searchBooksByUsn(String usn) throws Exception {
+    public List<Object[]> searchBooksByUsn(String usn) throws NoBookFoundException, NoStudentFoundException {
         Optional<Student> optionalStudent = studentService.findStudentByUsn(usn);
         if(optionalStudent.isPresent()){
             Student student = optionalStudent.get();
@@ -176,7 +192,7 @@ public class MenuServiceImpl  implements IMenuService{
                 throw new NoBookFoundException("No books found for this usn: " + usn);
             }
         }else{
-            throw new Exception("No student found for this usn: " + usn);
+            throw new NoStudentFoundException("No student found for this usn: " + usn);
         }
     }
 
@@ -274,9 +290,11 @@ public class MenuServiceImpl  implements IMenuService{
             case 6:
                 List <String> issueData = getNewIssueInformation();
                 try {
-                    issueBookToStudent(issueData);
+                    Issue issue = issueBookToStudent(issueData);
+                    System.out.println(DataOutput.bookIssuedDate(issue));
                     return isError;
-                } catch (NoBookFoundException e) {
+                } catch (NoBookFoundException | BookWithActiveIssueException | StudentWithActiveIssueException
+                        | StudentExistsWithAnotherNameException e) {
                     System.out.println(e.getMessage());
                     return true;
                 }
@@ -290,7 +308,7 @@ public class MenuServiceImpl  implements IMenuService{
                     Student student = issue.getIssueStudent();
                     System.out.println(DataOutput.listBookTableByUsn(info, student));
                     return isError;
-                } catch (Exception e) {
+                } catch (NoBookFoundException | NoStudentFoundException e){
                     System.out.println(e.getMessage());
                     return true;
                 }
