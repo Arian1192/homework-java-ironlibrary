@@ -32,4 +32,9 @@ public class BookServiceImpl implements IBookService{
     public Optional<Book> findOneByTitle(String title) {
         return bookRepository.findOneByTitle(title);
     }
+
+    @Override
+    public Optional<List<Book>> findAllByTitle(String title) {
+        return bookRepository.findAllByTitle(title);
+    }
 }
