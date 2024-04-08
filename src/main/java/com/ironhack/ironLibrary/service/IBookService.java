@@ -8,5 +8,6 @@ public interface IBookService {
     Optional<Book> findByIsbn(String isbn);
     Optional<List<Book>> findAllByCategory(String Category);
     Optional<Book> findOneByTitle(String Title);
+    Optional<List<Book>> findAllByTitle(String title);
 
 }
