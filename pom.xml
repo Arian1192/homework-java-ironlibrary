@@ -70,6 +70,9 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<arguments>
+						<argument>-Dspring.main.runOnce=true</argument>
+					</arguments>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -99,5 +102,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

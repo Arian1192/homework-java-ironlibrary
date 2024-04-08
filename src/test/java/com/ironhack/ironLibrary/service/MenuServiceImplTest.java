@@ -2,10 +2,12 @@ package com.ironhack.ironLibrary.service;
 
 import com.ironhack.ironLibrary.model.Author;
 import com.ironhack.ironLibrary.model.Book;
+import com.ironhack.ironLibrary.model.Issue;
 import com.ironhack.ironLibrary.model.Student;
 import com.ironhack.ironLibrary.repository.AuthorRepository;
 import com.ironhack.ironLibrary.repository.BookRepository;
 import com.ironhack.ironLibrary.repository.IssueRepository;
+import com.ironhack.ironLibrary.repository.StudentRepository;
 import com.ironhack.ironLibrary.utils.InvalidBookInformationException;
 import com.ironhack.ironLibrary.utils.NoBookFoundException;
 import org.junit.jupiter.api.AfterEach;
@@ -46,8 +48,8 @@ class MenuServiceImplTest {
     @Autowired
     private IssueRepository issueRepository;
 
-
-
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Test
     public void testAddBookWithValidInformation() {
@@ -59,9 +61,7 @@ class MenuServiceImplTest {
                 "g.kim@gmail.com",
                 "10"
         );
-
         assertDoesNotThrow(() -> menuService.addBook(validInformation));
-
     }
 
     @Test
@@ -74,7 +74,6 @@ class MenuServiceImplTest {
                 "my mail",
                 "hey"
         );
-
         InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,
                 () -> menuService.addBook(invalidInformation));
         assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
@@ -89,11 +88,11 @@ class MenuServiceImplTest {
                 "Gene Kim",
                 "g.kim@gmail.com"
         );
-
         InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,
                 () -> menuService.addBook(incompleteInformation));
         assertEquals("The book and author information must be a six-element string list.", exception.getMessage());
     }
+
     @Test
     public void testAddBookWithExtraInformation() {
         List<String> incompleteInformation = Arrays.asList(
@@ -105,7 +104,6 @@ class MenuServiceImplTest {
                 "10",
                 "10"
         );
-
         InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,
                 () -> menuService.addBook(incompleteInformation));
         assertEquals("The book and author information must be a six-element string list.", exception.getMessage());
@@ -121,16 +119,13 @@ class MenuServiceImplTest {
                 "g.kim@gmail.com",
                 "10"
         );
-
         assertDoesNotThrow(() -> menuService.addBook(validInformation));
-
         Book savedBook = bookService.findByIsbn("978-84-415-4302-0").orElse(null);
         assertNotNull(savedBook);
         assertEquals("978-84-415-4302-0", savedBook.getIsbn());
         assertEquals("The fenix project", savedBook.getTitle());
         assertEquals("novel", savedBook.getCategory());
         assertEquals(10, savedBook.getQuantity());
-
 
         Author savedAuthor = authorService.findByAuthorBook(savedBook).get();
         assertNotNull(savedAuthor);
@@ -153,7 +148,6 @@ class MenuServiceImplTest {
            Book book = menuService.searchBookByAuthor("Gene Kim");
             assertEquals("The fenix project", book.getTitle());
             assertEquals("978-84-415-4302-0", book.getIsbn());
-
         }catch (NoBookFoundException e){
             fail("An NoBookFoundException exception was thrown when it was not expected.");
         }
@@ -172,8 +166,6 @@ class MenuServiceImplTest {
         InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class, () -> menuService.searchBookByAuthor(authorName));
         assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
     }
-
-
 
     private static List<List<String>> getListOfBooksToSave() {
         List<String> book1 = Arrays.asList(
@@ -237,9 +229,7 @@ class MenuServiceImplTest {
         studentService.save(issueData.get(0), issueData.get(1));
         NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
         assertEquals("No books are found with that ISBN", exception.getMessage());
-
     }
-
 
     @Test
     void testIssueBookToStudentGoWrongWithAUsnWrong(){
@@ -251,7 +241,6 @@ class MenuServiceImplTest {
         studentService.save(issueData.get(0), issueData.get(1));
         InvalidBookInformationException exception = assertThrows(InvalidBookInformationException.class,() -> menuService.issueBookToStudent(issueData));
         assertEquals("The provided information is invalid. Please check the format", exception.getMessage());
-
     }
 
     @Test
@@ -261,7 +250,6 @@ class MenuServiceImplTest {
                 "Pedro",
                 "978-84-415-4302-1"
         );
-
         List<String> bookData = Arrays.asList(
                 "978-84-415-4302-1",
                 "The fenix project",
@@ -274,19 +262,15 @@ class MenuServiceImplTest {
         studentService.save(issueData.get(0), issueData.get(1));
         NoBookFoundException exception = assertThrows(NoBookFoundException.class,() -> menuService.issueBookToStudent(issueData));
         assertEquals("Quantity unavailable", exception.getMessage());
-
     }
 
-
-
     @Test
-    void testIssueBookToStudent() {
+    void testIssueBookToStudent() throws NoBookFoundException {
         List<String> issueData = Arrays.asList(
                 "09003688800",
                 "Pedro",
                 "978-84-415-4302-1"
         );
-
         List<String> bookData = Arrays.asList(
                 "978-84-415-4302-1",
                 "The fenix project",
@@ -296,25 +280,18 @@ class MenuServiceImplTest {
                 "10"
         );
         menuService.addBook(bookData);
-        studentService.save(issueData.get(0), issueData.get(1));
+        String usnStudent = issueData.get(0);
+        String name = issueData.get(1);
+
+        studentService.save(usnStudent,name);
         assertDoesNotThrow(() -> menuService.issueBookToStudent(issueData));
-        String usn = issueData.get(0);
-        Optional<List<Book>> optionalBookList = issueService.findAllBooksIssuedByUsn(usn);
+        Optional<List<Book>> optionalBookList = issueService.findAllBooksIssuedByUsn(usnStudent);
         if(optionalBookList.isPresent()){
             List<Book> bookList = optionalBookList.get();
             assertEquals(1, bookList.size());
             assertEquals(9, bookList.get(0).getQuantity());
         }
     }
-
-
-    @AfterEach
-    void tearDown() {
-        issueRepository.deleteAll();
-        authorRepository.deleteAll();
-        bookRepository.deleteAll();
-    }
-
 
     @Test
     void searchBooksAlongAuthors() {
@@ -350,10 +327,79 @@ class MenuServiceImplTest {
             assertEquals("comedy", book1.getCategory());
             assertEquals("JK ROWLING", author1.getName());
 
-
-
         }catch(NoBookFoundException e){
             fail("An NoBookFoundException exception was thrown when it was not expected.");
         }
+    }
+
+    @Test
+    void testSearchBooksByUsnProperFunction() throws Exception {
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "10"
+        );
+        List<String> issueData = Arrays.asList(
+            "09003688800",
+            "Pedro",
+            "978-84-415-4302-1"
+        );
+        menuService.addBook(bookData);
+        String usnStudent = issueData.get(0);
+        String name = issueData.get(1);
+        studentService.save(usnStudent,name);
+
+        try {
+            menuService.issueBookToStudent(issueData);
+            List<Object[]> objectList = menuService.searchBooksByUsn(usnStudent);
+            assertEquals(1, objectList.size());
+
+            Book book = (Book) objectList.get(0)[0];
+            Issue issue = (Issue) objectList.get(0)[1];
+            assertEquals("The fenix project", book.getTitle());
+            assertEquals("Pedro", issue.getIssueStudent().getName());
+        } catch (Exception e){
+            fail();
+        }
+    }
+
+    @Test
+    void testSearchBooksByUsnWrongUsn() throws Exception {
+        List<String> bookData = Arrays.asList(
+                "978-84-415-4302-1",
+                "The fenix project",
+                "novel",
+                "Gene Kim",
+                "g.kim@gmail.com",
+                "10"
+        );
+        List<String> issueData = Arrays.asList(
+                "09003688800",
+                "Pedro",
+                "978-84-415-4302-1"
+        );
+        menuService.addBook(bookData);
+        String usnStudent = issueData.get(0);
+        String name = issueData.get(1);
+        studentService.save(usnStudent,name);
+        try {
+            menuService.issueBookToStudent(issueData);
+            assertThrows(Exception.class, () -> {
+                menuService.searchBooksByUsn("00001");
+            });
+        } catch (Exception e){
+            fail();
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        issueRepository.deleteAll();
+        authorRepository.deleteAll();
+        bookRepository.deleteAll();
+        studentRepository.deleteAll();
     }
 }
