@@ -250,6 +250,7 @@ public class MenuServiceImpl  implements IMenuService{
                     System.out.println(DataOutput.listBookTable(books));
                     return isError;
                 } catch (NoBookFoundException e) {
+                    System.out.println(e.getMessage());
                     return true;
                 }
             case 4:
@@ -261,6 +262,7 @@ public class MenuServiceImpl  implements IMenuService{
                     System.out.println(DataOutput.oneBookTable(book));
                     return isError;
                 } catch (NoBookFoundException e) {
+                    System.out.println(e.getMessage());
                     return true;
                 }
             case 5:
